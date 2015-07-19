@@ -15,6 +15,7 @@ public class WrapContentViewPager extends ViewPager {
 
     private static final String TAG = WrapContentViewPager.class.getSimpleName();
     private int height = 0;
+    private int widthMeasuredSpec;
 
     public WrapContentViewPager(Context context) {
         super(context);
@@ -37,21 +38,49 @@ public class WrapContentViewPager extends ViewPager {
      */
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        widthMeasuredSpec = widthMeasureSpec;
         int mode = MeasureSpec.getMode(heightMeasureSpec);
 
         if (mode == MeasureSpec.UNSPECIFIED || mode == MeasureSpec.AT_MOST) {
-            super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-            int position = getCurrentItem();
-            View child = getViewAtPosition(position);
-            if (child != null) {
-                child.measure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
-                height = child.getMeasuredHeight();
-                heightMeasureSpec = MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY);
+            if(height == 0) {
+                // make sure that we have an height (not sure if this is necessary because it seems that onPageScrolled is called right after
+                super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+                int position = getCurrentItem();
+                View child = getViewAtPosition(position);
+                if (child != null) {
+                    height = measureViewHeight(child);
+                }
             }
-            Log.d(TAG, "current position:" + position + " measured height:" + height);
+            heightMeasureSpec = MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY);
+            if(BuildConfig.DEBUG) {
+                Log.d(TAG, "measured height:" + height);
+            }
         }
 
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+    }
+
+    @Override
+    protected void onPageScrolled(int position, float offset, int offsetPixels) {
+        super.onPageScrolled(position, offset, offsetPixels);
+        // scrolled position is always the left scrolled page
+        View leftView = getViewAtPosition(position);
+        View rightView = getViewAtPosition(position + 1);
+        if(leftView != null && rightView != null) {
+            int leftHeight = measureViewHeight(leftView);
+            int rightHeight = measureViewHeight(rightView);
+            this.height = (int) (leftHeight * (1 - offset) + rightHeight * (offset));
+            if(BuildConfig.DEBUG) {
+                Log.d(TAG, "scrolling left:" + leftHeight + " right:" + rightHeight + " height:" + height);
+            }
+            requestLayout();
+            invalidate();
+        }
+    }
+
+    private int measureViewHeight(View view) {
+        view.measure(widthMeasuredSpec, MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
+        return view.getMeasuredHeight();
     }
 
     protected View getViewAtPosition(int position) {
