@@ -85,10 +85,12 @@ public class WrapContentViewPager extends ViewPager {
 
     protected View getViewAtPosition(int position) {
         Object objectAtPosition = ((PagerAdapterWrapper)getAdapter()).getObjectAtPosition(position);
-        for (int i = 0; i < getChildCount(); i++) {
-            View child = getChildAt(i);
-            if(getAdapter().isViewFromObject(child, objectAtPosition)) {
-                return child;
+        if (objectAtPosition != null) {
+            for (int i = 0; i < getChildCount(); i++) {
+                View child = getChildAt(i);
+                if (child != null && getAdapter().isViewFromObject(child, objectAtPosition)) {
+                    return child;
+                }
             }
         }
         return null;
