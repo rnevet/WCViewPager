@@ -69,12 +69,15 @@ public class WrapContentViewPager extends ViewPager {
         if(leftView != null && rightView != null) {
             int leftHeight = measureViewHeight(leftView);
             int rightHeight = measureViewHeight(rightView);
-            this.height = (int) (leftHeight * (1 - offset) + rightHeight * (offset));
+            int newHeight = (int) (leftHeight * (1 - offset) + rightHeight * (offset));
             if(BuildConfig.DEBUG) {
-                Log.d(TAG, "scrolling left:" + leftHeight + " right:" + rightHeight + " height:" + height);
+                Log.d(TAG, "scrolling left:" + leftHeight + " right:" + rightHeight + " height:" + newHeight);
             }
-            requestLayout();
-            invalidate();
+            if(this.height != newHeight) {
+                this.height = newHeight;
+                requestLayout();
+                invalidate();
+            }
         }
     }
 
