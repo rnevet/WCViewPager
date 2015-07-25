@@ -3,6 +3,7 @@ package nevet.me.wcviewpagersample;
 import android.app.Activity;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.Menu;
@@ -30,7 +31,28 @@ public class SampleActivity extends Activity {
         stringArrayList.add(getString(R.string.lorem_short));
 
         SamplePagerAdapter adapter = new SamplePagerAdapter(stringArrayList);
-        ((ViewPager) findViewById(R.id.viewpager)).setAdapter(adapter);
+        final ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
+        viewPager.setAdapter(adapter);
+
+        // demo tab selection without scrolling
+        TabLayout tabs = (TabLayout) findViewById(R.id.tablayout);
+        tabs.setupWithViewPager(viewPager);
+        tabs.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                viewPager.setCurrentItem(tab.getPosition(), false);
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
     }
 
     @Override
@@ -92,6 +114,11 @@ public class SampleActivity extends Activity {
         @Override
         public void destroyItem(ViewGroup container, int position, Object object) {
             container.removeView((View) object);
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return "View" + position;
         }
     }
 }

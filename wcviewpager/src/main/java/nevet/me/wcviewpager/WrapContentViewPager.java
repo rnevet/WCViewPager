@@ -32,6 +32,7 @@ import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.SparseArray;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -40,18 +41,53 @@ public class WrapContentViewPager extends ViewPager {
 
     private static final String TAG = WrapContentViewPager.class.getSimpleName();
     private int height = 0;
+    private int decorHeight = 0;
     private int widthMeasuredSpec;
+
+    private boolean animateHeight;
+    private int rightHeight;
+    private int leftHeight;
+    private int scrollingPosition = -1;
 
     public WrapContentViewPager(Context context) {
         super(context);
+        init();
     }
 
     public WrapContentViewPager(Context context, AttributeSet attrs) {
         super(context, attrs);
+        init();
+    }
+
+    private void init() {
+        addOnPageChangeListener(new OnPageChangeListener() {
+
+
+            public int state;
+
+            @Override
+            public void onPageScrolled(int position, float offset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                if (state == SCROLL_STATE_IDLE) {
+                    height = 0; // measure the selected page in-case it's a change without scrolling
+                    Log.d(TAG, "onPageSelected:" + position);
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+                this.state = state;
+            }
+        });
     }
 
     @Override
     public void setAdapter(PagerAdapter adapter) {
+        height = 0; // so we measure the new content in onMeasure
         super.setAdapter(new PagerAdapterWrapper(adapter));
     }
 
@@ -68,38 +104,59 @@ public class WrapContentViewPager extends ViewPager {
 
         if (mode == MeasureSpec.UNSPECIFIED || mode == MeasureSpec.AT_MOST) {
             if(height == 0) {
+                // measure vertical decor (i.e. PagerTitleStrip) based on ViewPager implementation
+                decorHeight = 0;
+                for (int i = 0; i < getChildCount(); i++) {
+                    View child = getChildAt(i);
+                    LayoutParams lp = (LayoutParams) child.getLayoutParams();
+                    if(lp != null && lp.isDecor) {
+                        int vgrav = lp.gravity & Gravity.VERTICAL_GRAVITY_MASK;
+                        boolean consumeVertical = vgrav == Gravity.TOP || vgrav == Gravity.BOTTOM;
+                        if(consumeVertical) {
+                            decorHeight += child.getMeasuredHeight();
+                        }
+                    }
+                }
+
                 // make sure that we have an height (not sure if this is necessary because it seems that onPageScrolled is called right after
-                super.onMeasure(widthMeasureSpec, heightMeasureSpec);
                 int position = getCurrentItem();
                 View child = getViewAtPosition(position);
                 if (child != null) {
-                    height = measureViewHeight(child);
+                    height = measureViewHeight(child) + getPaddingBottom() + getPaddingTop();
                 }
+                Log.d(TAG, "onMeasure height:" + height + " decor:" + decorHeight);
+
             }
-            heightMeasureSpec = MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY);
-            if(BuildConfig.DEBUG) {
-                Log.d(TAG, "measured height:" + height);
-            }
+            heightMeasureSpec = MeasureSpec.makeMeasureSpec(height + decorHeight, MeasureSpec.EXACTLY);
+            Log.d(TAG, "onMeasure total height:" + (height + decorHeight));
         }
 
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
 
     @Override
-    protected void onPageScrolled(int position, float offset, int offsetPixels) {
-        super.onPageScrolled(position, offset, offsetPixels);
-        // scrolled position is always the left scrolled page
-        View leftView = getViewAtPosition(position);
-        View rightView = getViewAtPosition(position + 1);
-        if(leftView != null && rightView != null) {
-            int leftHeight = measureViewHeight(leftView);
-            int rightHeight = measureViewHeight(rightView);
-            int newHeight = (int) (leftHeight * (1 - offset) + rightHeight * (offset));
-            if(BuildConfig.DEBUG) {
-                Log.d(TAG, "scrolling left:" + leftHeight + " right:" + rightHeight + " height:" + newHeight);
+    public void onPageScrolled(int position, float offset, int positionOffsetPixels) {
+        super.onPageScrolled(position, offset, positionOffsetPixels);
+        // cache scrolled view heights
+        if (scrollingPosition != position) {
+            scrollingPosition = position;
+            // scrolled position is always the left scrolled page
+            View leftView = getViewAtPosition(position);
+            View rightView = getViewAtPosition(position + 1);
+            if (leftView != null && rightView != null) {
+                leftHeight = measureViewHeight(leftView);
+                rightHeight = measureViewHeight(rightView);
+                animateHeight = true;
+                Log.d(TAG, "onPageScrolled heights left:" + leftHeight + " right:" + rightHeight);
+            } else {
+                animateHeight = false;
             }
-            if(this.height != newHeight) {
-                this.height = newHeight;
+        }
+        if (animateHeight) {
+            int newHeight = (int) (leftHeight * (1 - offset) + rightHeight * (offset));
+            if (height != newHeight) {
+                Log.d(TAG, "onPageScrolled height change:" + newHeight);
+                height = newHeight;
                 requestLayout();
                 invalidate();
             }
