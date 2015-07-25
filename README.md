@@ -1,5 +1,7 @@
 ## WCViewPager
-Android ViewPager that respects height of wrap_content, inspired by answers to this StackOverflow question: http://stackoverflow.com/questions/8394681/android-i-am-unable-to-have-viewpager-wrap-content
+Android ViewPager that respects height of wrap_content. 
+
+Solution was inspired by answers to this StackOverflow question: http://stackoverflow.com/questions/8394681/android-i-am-unable-to-have-viewpager-wrap-content
 
 **This is a work in progress, so there still might be bugs and edge cases not covered.**
 
