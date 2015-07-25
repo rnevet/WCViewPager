@@ -16,4 +16,5 @@ The class relies the v4 support library ViewPager.
 Just like a ViewPager, either in an XML or Code.
 A simple Sample project is available for reference.
 
+### License
 This project is licensed under the terms of the MIT license.
