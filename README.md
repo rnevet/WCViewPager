@@ -17,4 +17,4 @@ Just like a ViewPager, either in an XML or Code.
 A simple Sample project is available for reference.
 
 ### License
-This project is licensed under the terms of the MIT license.
+This project is licensed under the terms of the [MIT license](https://github.com/rnevet/WCViewPager/blob/master/LICENSE).
