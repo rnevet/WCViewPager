@@ -17,6 +17,8 @@
         <nevet.me.wcviewpager.WrapContentViewPager
             android:id="@+id/viewpager"
             android:layout_width="match_parent"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
             android:layout_height="wrap_content">
 
             <android.support.v4.view.PagerTabStrip

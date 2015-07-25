@@ -66,9 +66,7 @@ public class WrapContentViewPager extends ViewPager {
             public int state;
 
             @Override
-            public void onPageScrolled(int position, float offset, int positionOffsetPixels) {
-
-            }
+            public void onPageScrolled(int position, float offset, int positionOffsetPixels) {}
 
             @Override
             public void onPageSelected(int position) {
@@ -113,7 +111,7 @@ public class WrapContentViewPager extends ViewPager {
                         int vgrav = lp.gravity & Gravity.VERTICAL_GRAVITY_MASK;
                         boolean consumeVertical = vgrav == Gravity.TOP || vgrav == Gravity.BOTTOM;
                         if(consumeVertical) {
-                            decorHeight += child.getMeasuredHeight();
+                            decorHeight += child.getMeasuredHeight() ;
                         }
                     }
                 }
@@ -122,13 +120,14 @@ public class WrapContentViewPager extends ViewPager {
                 int position = getCurrentItem();
                 View child = getViewAtPosition(position);
                 if (child != null) {
-                    height = measureViewHeight(child) + getPaddingBottom() + getPaddingTop();
+                    height = measureViewHeight(child);
                 }
                 Log.d(TAG, "onMeasure height:" + height + " decor:" + decorHeight);
 
             }
-            heightMeasureSpec = MeasureSpec.makeMeasureSpec(height + decorHeight, MeasureSpec.EXACTLY);
-            Log.d(TAG, "onMeasure total height:" + (height + decorHeight));
+            int totalHeight = height + decorHeight + getPaddingBottom() + getPaddingTop();
+            heightMeasureSpec = MeasureSpec.makeMeasureSpec(totalHeight, MeasureSpec.EXACTLY);
+            Log.d(TAG, "onMeasure total height:" + totalHeight);
         }
 
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
@@ -164,7 +163,7 @@ public class WrapContentViewPager extends ViewPager {
     }
 
     private int measureViewHeight(View view) {
-        view.measure(widthMeasuredSpec, MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
+        view.measure(getChildMeasureSpec(widthMeasuredSpec, getPaddingLeft() + getPaddingRight(), view.getLayoutParams().width), MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
         return view.getMeasuredHeight();
     }
 
