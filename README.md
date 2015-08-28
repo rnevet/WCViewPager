@@ -1,7 +1,7 @@
 ## WCViewPager
 Android ViewPager that respects height of wrap_content. 
 
-The WrapContentViewPager is a in-place replacement for a [android.support.v4.view.ViewPager](http://developer.android.com/reference/android/support/v4/view/ViewPager.html).
+The WrapContentViewPager is an in-place replacement for a [android.support.v4.view.ViewPager](http://developer.android.com/reference/android/support/v4/view/ViewPager.html).
 When used with wrap_content height the WrapContentViewPager will resize to the height of the selected child view and smoothly change its height when ViewPager is Scrolled.
 
 Solution was inspired by answers to this StackOverflow question: http://stackoverflow.com/questions/8394681/android-i-am-unable-to-have-viewpager-wrap-content
