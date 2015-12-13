@@ -1,6 +1,24 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools" tools:context=".SampleActivity">
-    <item android:id="@+id/action_settings" android:title="@string/action_settings"
-        android:orderInCategory="100" app:showAsAction="never" />
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".SampleActivity">
+    <item
+        android:id="@+id/action_textviews"
+        android:orderInCategory="100"
+        android:title="Use TextViews"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_imageviews"
+        android:orderInCategory="200"
+        android:title="Use ImageViews"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_imageviews_async"
+        android:orderInCategory="300"
+        android:title="Use Async ImageViews"
+        app:showAsAction="never" />
+
+
 </menu>
