@@ -17,7 +17,7 @@ The class relies the v4 support library ViewPager.
 Just like a ViewPager, either in an XML or Code.
 
 #### Sample project
-A simple Sample (using TextViews and ImageViews) project is available for reference under app.
+A simple Sample (using TextViews and ImageViews) project is available for reference under [app](https://github.com/rnevet/WCViewPager/tree/master/app).
 You can install the [APK](https://github.com/rnevet/WCViewPager/blob/master/app/wcviewpager-sample.apk?raw=true) to see it in action. 
 
 ### License
