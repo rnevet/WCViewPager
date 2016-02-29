@@ -97,6 +97,8 @@ public class WrapContentViewPager extends ViewPager {
      */
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        
         widthMeasuredSpec = widthMeasureSpec;
         int mode = MeasureSpec.getMode(heightMeasureSpec);
 
