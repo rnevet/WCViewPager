@@ -3,7 +3,6 @@ package nevet.me.wcviewpagersample;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
-import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -18,6 +17,8 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 import java.util.ArrayList;
 import java.util.Random;
+
+import nevet.me.wcviewpager.ObjectAtPositionPagerAdapter;
 
 
 public class SampleActivity extends AppCompatActivity {
@@ -128,7 +129,7 @@ public class SampleActivity extends AppCompatActivity {
     }
 
 
-    public class TextViewPagerAdapter extends PagerAdapter {
+    public class TextViewPagerAdapter extends ObjectAtPositionPagerAdapter {
 
         private final ArrayList<String> strings;
 
@@ -148,7 +149,7 @@ public class SampleActivity extends AppCompatActivity {
         }
 
         @Override
-        public Object instantiateItem(ViewGroup container, int position) {
+        public Object instantiateItemObject(ViewGroup container, int position) {
             View view = View.inflate(container.getContext(), android.R.layout.test_list_item, null);
             ((TextView)view.findViewById(android.R.id.text1)).setText(strings.get(position));
             container.addView(view);
@@ -162,7 +163,7 @@ public class SampleActivity extends AppCompatActivity {
         }
 
         @Override
-        public void destroyItem(ViewGroup container, int position, Object object) {
+        public void destroyItemObject(ViewGroup container, int position, Object object) {
             container.removeView((View) object);
         }
 
@@ -172,7 +173,7 @@ public class SampleActivity extends AppCompatActivity {
         }
     }
 
-    public class ImageViewPagerAdapter extends PagerAdapter {
+    public class ImageViewPagerAdapter extends ObjectAtPositionPagerAdapter {
 
         private final ArrayList<Integer> images;
 
@@ -192,17 +193,16 @@ public class SampleActivity extends AppCompatActivity {
         }
 
         @Override
-        public Object instantiateItem(ViewGroup container, int position) {
+        public Object instantiateItemObject(ViewGroup container, int position) {
             ImageView view = new ImageView(container.getContext());
             view.setScaleType(ImageView.ScaleType.CENTER_CROP);
             view.setImageResource(images.get(position));
             container.addView(view);
-
             return view;
         }
 
         @Override
-        public void destroyItem(ViewGroup container, int position, Object object) {
+        public void destroyItemObject(ViewGroup container, int position, Object object) {
             container.removeView((View) object);
         }
 
@@ -212,7 +212,7 @@ public class SampleActivity extends AppCompatActivity {
         }
     }
 
-    public class AsyncImageViewPagerAdapter extends PagerAdapter {
+    public class AsyncImageViewPagerAdapter extends ObjectAtPositionPagerAdapter {
 
         private final ArrayList<String> images;
 
@@ -232,7 +232,7 @@ public class SampleActivity extends AppCompatActivity {
         }
 
         @Override
-        public Object instantiateItem(ViewGroup container, int position) {
+        public Object instantiateItemObject(ViewGroup container, int position) {
             ImageView view = new ImageView(container.getContext());
             view.setScaleType(ImageView.ScaleType.CENTER_CROP);
             container.addView(view);
@@ -241,7 +241,7 @@ public class SampleActivity extends AppCompatActivity {
         }
 
         @Override
-        public void destroyItem(ViewGroup container, int position, Object object) {
+        public void destroyItemObject(ViewGroup container, int position, Object object) {
             container.removeView((View) object);
         }
 

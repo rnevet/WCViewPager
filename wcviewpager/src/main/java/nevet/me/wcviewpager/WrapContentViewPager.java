@@ -25,16 +25,12 @@ package nevet.me.wcviewpager;
  */
 
 import android.content.Context;
-import android.database.DataSetObserver;
-import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.util.SparseArray;
 import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
 
 
 public class WrapContentViewPager extends ViewPager {
@@ -85,8 +81,11 @@ public class WrapContentViewPager extends ViewPager {
 
     @Override
     public void setAdapter(PagerAdapter adapter) {
+        if(!(adapter instanceof ObjectAtPositionInterface)) {
+            throw new IllegalArgumentException("WrapContentViewPage requires that PagerAdapter will implement ObjectAtPositionInterface");
+        }
         height = 0; // so we measure the new content in onMeasure
-        super.setAdapter(new PagerAdapterWrapper(adapter));
+        super.setAdapter(adapter);
     }
 
     /**
@@ -171,7 +170,7 @@ public class WrapContentViewPager extends ViewPager {
 
     protected View getViewAtPosition(int position) {
         if(getAdapter() != null) {
-            Object objectAtPosition = ((PagerAdapterWrapper) getAdapter()).getObjectAtPosition(position);
+            Object objectAtPosition = ((ObjectAtPositionInterface) getAdapter()).getObjectAtPosition(position);
             if (objectAtPosition != null) {
                 for (int i = 0; i < getChildCount(); i++) {
                     View child = getChildAt(i);
@@ -185,99 +184,4 @@ public class WrapContentViewPager extends ViewPager {
     }
 
 
-    /**
-     * Wrapper for PagerAdapter so we can ask for Object at index
-     */
-    private class PagerAdapterWrapper extends PagerAdapter {
-        private final PagerAdapter innerAdapter;
-        private SparseArray<Object> objects;
-
-        public PagerAdapterWrapper(PagerAdapter adapter) {
-            this.innerAdapter = adapter;
-            this.objects = new SparseArray<>(adapter.getCount());
-        }
-        
-
-        @Override
-        public void startUpdate(ViewGroup container) {
-            innerAdapter.startUpdate(container);
-        }
-
-        @Override
-        public Object instantiateItem(ViewGroup container, int position) {
-            Object object = innerAdapter.instantiateItem(container, position);
-            objects.put(position, object);
-            return object;
-        }
-
-        @Override
-        public void destroyItem(ViewGroup container, int position, Object object) {
-            innerAdapter.destroyItem(container, position, object);
-            objects.remove(position);
-        }
-
-        @Override
-        public void setPrimaryItem(ViewGroup container, int position, Object object) {
-            innerAdapter.setPrimaryItem(container, position, object);
-        }
-
-        @Override
-        public void finishUpdate(ViewGroup container) {
-            innerAdapter.finishUpdate(container);
-        }
-
-        @Override
-        public Parcelable saveState() {
-            return innerAdapter.saveState();
-        }
-
-        @Override
-        public void restoreState(Parcelable state, ClassLoader loader) {
-            innerAdapter.restoreState(state, loader);
-        }
-
-        @Override
-        public int getItemPosition(Object object) {
-            return innerAdapter.getItemPosition(object);
-        }
-
-        @Override
-        public void notifyDataSetChanged() {
-            innerAdapter.notifyDataSetChanged();
-        }
-
-        @Override
-        public void registerDataSetObserver(DataSetObserver observer) {
-            innerAdapter.registerDataSetObserver(observer);
-        }
-
-        @Override
-        public void unregisterDataSetObserver(DataSetObserver observer) {
-            innerAdapter.unregisterDataSetObserver(observer);
-        }
-
-        @Override
-        public float getPageWidth(int position) {
-            return innerAdapter.getPageWidth(position);
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return innerAdapter.getPageTitle(position);
-        }
-
-        @Override
-        public int getCount() {
-            return innerAdapter.getCount();
-        }
-
-        @Override
-        public boolean isViewFromObject(View view, Object object) {
-            return innerAdapter.isViewFromObject(view, object);
-        }
-
-        public Object getObjectAtPosition(int position) {
-            return objects.get(position);
-        }
-    }
 }
